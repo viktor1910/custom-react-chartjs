@@ -21,6 +21,7 @@ import {
   Typography,
   FormControlLabel,
   checkboxClasses,
+  Box,
 } from '@mui/material';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import SquareShape from '../assets/SquareShape';
@@ -53,6 +54,7 @@ const chartData: ChartData = {
       data: labels.map(
         () => Math.floor(Math.random() * (1000 + 1000) + 1) - 1000
       ),
+      yAxisID: 'y',
     },
     {
       type: 'line' as const,
@@ -63,11 +65,13 @@ const chartData: ChartData = {
       data: labels.map(
         () => Math.floor(Math.random() * (1000 + 1000) + 1) - 1000
       ),
+      yAxisID: 'y1',
     },
   ],
 };
 
 const chartOptions: ChartOptions = {
+  responsive: true,
   scales: {
     x: {
       ticks: {
@@ -80,6 +84,17 @@ const chartOptions: ChartOptions = {
     y: {
       ticks: {
         stepSize: 1000,
+      },
+      type: 'linear',
+      display: true,
+      position: 'left',
+    },
+    y1: {
+      type: 'linear',
+      display: true,
+      position: 'right',
+      grid: {
+        drawOnChartArea: false,
       },
     },
   },
@@ -109,11 +124,13 @@ const chartOptions: ChartOptions = {
 };
 
 const ChartComponent: React.FC = () => {
-  const [selectedLegends, setSelectedLegends] = useState<string[]>([]);
+  const [selectedLegends, setSelectedLegends] = useState<string[]>(
+    chartData.datasets.map(dataset => dataset.label!)
+  );
 
   const handleLegendChange = (event: ChangeEvent<HTMLInputElement>) => {
     const selectedOption = event.target.name;
-    // Handle the selected legend item
+
     const updatedSelection = selectedLegends.includes(selectedOption)
       ? selectedLegends.filter(legend => legend !== selectedOption)
       : [...selectedLegends, selectedOption];
@@ -130,24 +147,30 @@ const ChartComponent: React.FC = () => {
   return (
     <Card
       sx={{
-        padding: 4,
+        padding: 2,
+        width: '100%',
+        height: '100%',
       }}
     >
       <Stack direction="row" justifyContent="space-between">
         <Typography>Multi-devices</Typography>
         <Typography>M - 6 months</Typography>
       </Stack>
-
-      <Chart
-        type="line"
-        data={dynamicChartData}
-        width={100}
-        height={20}
-        options={chartOptions}
-      />
+      <Box
+        sx={{
+          marginTop: 2,
+        }}
+      >
+        <Stack direction="row" justifyContent="space-between">
+          <Typography variant="body2">unit 1</Typography>
+          <Typography variant="body2">unit 2</Typography>
+        </Stack>
+        <Chart type="line" data={dynamicChartData} options={chartOptions} />
+      </Box>
       <Stack
         direction="row"
         justifyContent="space-between"
+        alignItems="center"
         sx={{
           marginTop: 4,
         }}
